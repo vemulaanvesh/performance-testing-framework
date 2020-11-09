@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose.yml
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: jenkins
+  name: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: jenkins
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ./kompose convert -f docker-compose.yml
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: jenkins
+    spec:
+      containers:
+        - env:
+            - name: JENKINS_ADMIN_LOGIN
+              value: admin
+            - name: JENKINS_ADMIN_PASSWORD
+              value: admin
+          image: jenkins/jenkins
+          name: jenkins
+          ports:
+            - containerPort: 8080
+            - containerPort: 50000
+          resources: {}
+          volumeMounts:
+            - mountPath: /usr/local/bin/dind/
+              name: docker-dind
+            - mountPath: /var/run/docker.sock
+              name: jenkins-claim1
+            - mountPath: /var/jenkins_home
+              name: jenkins-home
+            - mountPath: /var/lib/jmeter-scenarios/
+              name: jenkins-claim3
+      restartPolicy: Always
+      volumes:
+        - name: docker-dind
+          persistentVolumeClaim:
+            claimName: docker-dind
+        - name: jenkins-claim1
+          persistentVolumeClaim:
+            claimName: jenkins-claim1
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-home
+        - name: jenkins-claim3
+          persistentVolumeClaim:
+            claimName: jenkins-claim3
+status: {}

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose.yml
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: jmeter
+  name: jmeter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: jmeter
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ./kompose convert -f docker-compose.yml
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: jmeter
+    spec:
+      containers:
+        - command:
+            - cat
+          image: java:8-jdk
+          name: jmeter
+          resources: {}
+      restartPolicy: Always
+status: {}
